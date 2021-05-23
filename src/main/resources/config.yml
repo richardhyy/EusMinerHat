@@ -1,0 +1,3 @@
+language: 'en'
+miner: 'xmrig'
+checkInterval: 60

@@ -1,0 +1,6 @@
+name: EusMinerHat
+version: ${project.version}
+main: cc.eumc.eusminerhat.MinerHat
+api-version: 1.16
+authors: [ EucalyptusLeaves ]
+website: www.eumc.cc

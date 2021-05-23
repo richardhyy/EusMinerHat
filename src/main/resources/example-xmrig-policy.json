@@ -1,0 +1,5 @@
+{
+  "description": "Example policy for XMRig",
+  "miningPlayerCountCeiling": 1,
+  "startCommand": "xmrig -o xmr.f2pool.com:13531 -u 85vuAxv2YMVi325ZoTHah9A638MayPfsxVCaYYwi9DAf6SaGUUXXgA96D59JqbwYhAQEAuYLbNQRJe1CSpKTcjQSQu6ctDE.minerhut -p x -k"
+}
