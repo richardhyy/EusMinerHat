@@ -4,3 +4,9 @@ main: cc.eumc.eusminerhat.MinerHat
 api-version: 1.16
 authors: [ EucalyptusLeaves ]
 website: www.eumc.cc
+commands:
+  minerhat:
+permissions:
+  minerhut.admin:
+    default: op
+    description: Permission for MinerHut management commands

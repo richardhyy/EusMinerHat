@@ -1,5 +1,6 @@
 package cc.eumc.eusminerhat;
 
+import cc.eumc.eusminerhat.command.BukkitCommandExecutor;
 import cc.eumc.eusminerhat.listener.PlayerListener;
 import cc.eumc.eusminerhat.miner.MinerManager;
 import cc.eumc.eusminerhat.miner.MinerPolicy;
@@ -7,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -61,6 +61,11 @@ public final class MinerHat extends JavaPlugin {
 
         this.config = new MinerHatConfig(this);
 
+        getCommand("minerhat").setExecutor(new BukkitCommandExecutor(this));
+
+
+        // Failable operation
+        // If the policy failed to load, plugin enabling would stop here.
         try {
             MinerPolicy policy = MinerPolicy.loadPolicy(Paths.get(getMinerPath() + "/" + config.getMiner() + ".json"));
             this.minerManager = new MinerManager(this, config.getMiner(), policy);
