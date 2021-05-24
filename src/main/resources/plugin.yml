@@ -6,6 +6,7 @@ authors: [ EucalyptusLeaves ]
 website: www.eumc.cc
 commands:
   minerhat:
+  minerhatadmin:
 permissions:
   minerhut.contributor:
     default: true

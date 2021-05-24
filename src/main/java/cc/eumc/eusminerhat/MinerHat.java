@@ -1,11 +1,13 @@
 package cc.eumc.eusminerhat;
 
 import cc.eumc.eusminerhat.command.bukkit.AdminCommandExecutor;
+import cc.eumc.eusminerhat.exception.MinerException;
 import cc.eumc.eusminerhat.listener.PlayerListener;
 import cc.eumc.eusminerhat.miner.MinerManager;
 import cc.eumc.eusminerhat.miner.MinerPolicy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.InputStream;
@@ -20,6 +22,7 @@ public final class MinerHat extends JavaPlugin {
     private String LanguagePath;
     private MinerHatConfig config;
     private LocaleManager localeManager;
+    private BukkitTask checkTask;
 
     public MinerManager getMinerManager() {
         return minerManager;
@@ -42,9 +45,29 @@ public final class MinerHat extends JavaPlugin {
         this.MinerPath = getDataFolder() + "/miner";
         this.LanguagePath = getDataFolder() + "/language";
 
-        File file = new File(getDataFolder(), "config.yml");
+        loadMinerHatConfig();
 
-        if (!file.exists()) {
+        getCommand("minerhatadmin").setExecutor(new AdminCommandExecutor(this));
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+
+        try {
+            registerMiner();
+        } catch (MinerException e) {
+            sendSevere(l("policy.failure.loading"));
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        if (minerManager != null) {
+            minerManager.stopMining();
+        }
+    }
+
+    public void loadMinerHatConfig() {
+        File configFile = new File(getDataFolder(), "config.yml");
+
+        if (!configFile.exists()) {
             saveDefaultConfig();
         }
 
@@ -89,33 +112,36 @@ public final class MinerHat extends JavaPlugin {
             sendSevere(String.format("§cFailed loading language pack: %s.json", config.getLanguage()));
         }
 
-        getCommand("minerhat").setExecutor(new AdminCommandExecutor(this));
+    }
 
+    /**
+     * Create a new MinerManager and RunningCheckTimer.
+     * It will also try to stop the existing miner if needed.
+     * @throws MinerException
+     */
+    public void registerMiner() throws MinerException {
+        if (this.minerManager != null) { // Attempt to stop existing miner
+            this.minerManager.stopMining();
+            this.minerManager = null;
+        }
 
-        // Failable operation
-        // If the policy failed to load, plugin enabling would stop here.
         try {
             MinerPolicy policy = MinerPolicy.loadPolicy(Paths.get(getMinerPath() + "/" + config.getMiner() + ".json"));
             this.minerManager = new MinerManager(this, config.getMiner(), policy);
             printMinerInformation();
         } catch (Exception e) {
             e.printStackTrace();
-            sendSevere(l("policy.failure.loading"));
-            return;
+            throw new MinerException(MinerException.MinerExceptionType.FAILED_LOADING_POLICY, "Failed loading miner policy");
         }
 
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        if (this.checkTask != null) { // Attempt to cancel existing timer
+            this.checkTask.cancel();
+            this.checkTask = null;
+        }
 
         if (config.getCheckInterval() > 0) { // check timer will be disabled if interval is less or equal than 0
             long interval = config.getCheckInterval() * 20L;
-            getServer().getScheduler().runTaskTimer(this, new CheckIntervalTimer(this), interval, interval);
-        }
-    }
-
-    @Override
-    public void onDisable() {
-        if (minerManager != null) {
-            minerManager.stopMining();
+            this.checkTask = getServer().getScheduler().runTaskTimer(this, new CheckIntervalTimer(this), interval, interval);
         }
     }
 
@@ -129,15 +155,24 @@ public final class MinerHat extends JavaPlugin {
     }
 
     public void sendSevere(String message) {
-        Bukkit.getServer().getLogger().severe(l("message.header") + message);
+        Bukkit.getServer().getLogger().severe(prefixForEachLine(message));
     }
 
     public void sendWarn(String message) {
-        Bukkit.getServer().getLogger().warning(l("message.header") + message);
+        Bukkit.getServer().getLogger().warning(prefixForEachLine(message));
     }
 
     public void sendInfo(String message) {
-        Bukkit.getServer().getLogger().info(l("message.header") + message);
+        Bukkit.getServer().getLogger().info(prefixForEachLine(message));
+    }
+
+    public String prefixForEachLine(String text) {
+        String prefix = l("message.prefix");
+        String[] lines = text.split("\n");
+        for (int i=0; i<lines.length; i++) {
+            lines[i] = prefix + lines[i];
+        }
+        return String.join("\n", lines);
     }
 
     private void createExamplePolicy() throws Exception {
