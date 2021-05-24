@@ -18,7 +18,8 @@ public class CheckIntervalTimer implements Runnable {
         }
 
         if (minerManager.checkAndToggleMining()) {
-            plugin.sendInfo(String.format("Miner status changed: %s", minerManager.getMinerStatus() ? "mining" : "stopped"));
+            plugin.sendInfo(String.format(plugin.l("miner.statusChanged"), minerManager.getMinerStatus() ?
+                    plugin.l("miner.status.mining") : plugin.l("miner.status.stopped")));
         }
     }
 }

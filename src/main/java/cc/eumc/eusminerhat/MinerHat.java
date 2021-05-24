@@ -1,6 +1,6 @@
 package cc.eumc.eusminerhat;
 
-import cc.eumc.eusminerhat.command.BukkitCommandExecutor;
+import cc.eumc.eusminerhat.command.bukkit.AdminCommandExecutor;
 import cc.eumc.eusminerhat.listener.PlayerListener;
 import cc.eumc.eusminerhat.miner.MinerManager;
 import cc.eumc.eusminerhat.miner.MinerPolicy;
@@ -17,23 +17,31 @@ import java.util.Objects;
 public final class MinerHat extends JavaPlugin {
     private MinerManager minerManager;
     private String MinerPath;
+    private String LanguagePath;
     private MinerHatConfig config;
+    private LocaleManager localeManager;
 
     public MinerManager getMinerManager() {
         return minerManager;
     }
-
     public String getMinerPath() {
         return MinerPath;
     }
-
+    public String getLanguagePath() {
+        return LanguagePath;
+    }
     public MinerHatConfig getMinerHatConfig() {
         return config;
+    }
+    public LocaleManager getLocaleManager() {
+        return localeManager;
     }
 
     @Override
     public void onEnable() {
         this.MinerPath = getDataFolder() + "/miner";
+        this.LanguagePath = getDataFolder() + "/language";
+
         File file = new File(getDataFolder(), "config.yml");
 
         if (!file.exists()) {
@@ -59,9 +67,29 @@ public final class MinerHat extends JavaPlugin {
             }
         }
 
+        File languageDir = new File(LanguagePath);
+        if (!languageDir.exists()) {
+            languageDir.mkdir();
+
+            // Export default language pack
+            try {
+                exportDefaultLanguage();
+            } catch (Exception e) {
+                e.printStackTrace();
+                sendSevere("§cFailed exporting default language pack.");
+            }
+        }
+
         this.config = new MinerHatConfig(this);
 
-        getCommand("minerhat").setExecutor(new BukkitCommandExecutor(this));
+        try {
+            this.localeManager = LocaleManager.createLocaleManager(this, config.getLanguage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendSevere(String.format("§cFailed loading language pack: %s.json", config.getLanguage()));
+        }
+
+        getCommand("minerhat").setExecutor(new AdminCommandExecutor(this));
 
 
         // Failable operation
@@ -72,7 +100,7 @@ public final class MinerHat extends JavaPlugin {
             printMinerInformation();
         } catch (Exception e) {
             e.printStackTrace();
-            sendSevere("§cFailed loading policy.");
+            sendSevere(l("policy.failure.loading"));
             return;
         }
 
@@ -87,31 +115,29 @@ public final class MinerHat extends JavaPlugin {
     @Override
     public void onDisable() {
         if (minerManager != null) {
-            sendInfo("Stopping miner.");
             minerManager.stopMining();
         }
     }
 
     void printMinerInformation() {
-        sendInfo(String.format("Name: %s", config.getMiner()));
-        sendInfo(String.format("Check Interval: %s", config.getCheckInterval()));
+        sendInfo(String.format(l("miner.info.name"), config.getMiner()));
+        sendInfo(String.format(l("miner.info.checkInterval"), config.getCheckInterval()));
     }
 
     public String l(String stringToken) {
-        // TODO: localization
-        return stringToken;
+        return localeManager.getLocalized(stringToken);
     }
 
     public void sendSevere(String message) {
-        Bukkit.getServer().getLogger().severe("[EusMinerHat] " + message);
+        Bukkit.getServer().getLogger().severe(l("message.header") + message);
     }
 
     public void sendWarn(String message) {
-        Bukkit.getServer().getLogger().warning("[EusMinerHat] " + message);
+        Bukkit.getServer().getLogger().warning(l("message.header") + message);
     }
 
     public void sendInfo(String message) {
-        Bukkit.getServer().getLogger().info("[EusMinerHat] " + message);
+        Bukkit.getServer().getLogger().info(l("message.header") + message);
     }
 
     private void createExamplePolicy() throws Exception {
@@ -119,5 +145,10 @@ public final class MinerHat extends JavaPlugin {
         Files.copy(Objects.requireNonNull(in), new File(MinerPath + "/xmrig.json").toPath(), StandardCopyOption.REPLACE_EXISTING);
         File minerDir = new File(MinerPath + "/xmrig");
         minerDir.mkdir();
+    }
+
+    private void exportDefaultLanguage() throws Exception {
+        InputStream in = getResource("en.json");
+        Files.copy(Objects.requireNonNull(in), new File(LanguagePath + "/en.json").toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }

@@ -7,6 +7,9 @@ website: www.eumc.cc
 commands:
   minerhat:
 permissions:
+  minerhut.contributor:
+    default: true
+    description: Permission for MinerHut mining contributior commands
   minerhut.admin:
     default: op
     description: Permission for MinerHut management commands

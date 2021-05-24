@@ -1,1 +1,19 @@
-{}
+{
+  "translations": {
+    "message.header": "[EusMinerHat] ",
+    "message.permissionDenied": "Sorry.",
+    "policy.executableExists": "§aMiner %s: executable file exists",
+    "policy.createdFolder": "Created folder for miner %s at %s",
+    "policy.failure.minerNotFound": "§cMiner %s cannot be found. (%s)",
+    "policy.failure.loading": "§cFailed loading policy",
+    "policy.failure.noValidCommands": "§cPolicy for miner %s does not contain valid launch commands",
+    "miner.info.name": "Name: %s",
+    "miner.info.checkInterval": "Check Interval: %ss",
+    "miner.started": "§aStarted mining",
+    "miner.stopped": "Miner stopped",
+    "miner.failedStarting": "§cFailed starting miner: %s",
+    "miner.statusChanged": "Miner status changed: %s",
+    "miner.status.mining": "mining",
+    "miner.status.stopped": "stopped"
+  }
+}

@@ -1,4 +1,4 @@
-package cc.eumc.eusminerhat.command;
+package cc.eumc.eusminerhat.command.bukkit;
 
 import cc.eumc.eusminerhat.MinerHat;
 import org.bukkit.command.Command;
@@ -11,24 +11,39 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BukkitCommandExecutor implements CommandExecutor, TabExecutor {
+public class AdminCommandExecutor implements CommandExecutor, TabExecutor {
     MinerHat plugin;
     private String adminPermissionNode = "minerhat.admin";
-    private String[] commands = {"help", "status", "start", "stop", "policy", "reload"};
+    private String[] commands = {"help", "status", "log", "start", "stop", "policy", "reload"};
     private String[] policySubCommands = {"list", "set"};
 
-    public BukkitCommandExecutor(MinerHat plugin) {
+    public AdminCommandExecutor(MinerHat plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String alias, String[] strings) {
+    public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
         if (sender.hasPermission(adminPermissionNode)) {
-
-            // TODO: Admin commands
-
+            if (args.length == 1) {
+                switch (args[0].toLowerCase()) {
+                    case "status":
+                        break;
+                    case "log":
+                        break;
+                    case "start":
+                        break;
+                    case "stop":
+                        break;
+                    case "reload":
+                        break;
+                    case "help":
+                        // TODO: Help message
+                    default:
+                        // TODO: Command not found message.
+                }
+            }
         } else {
-            sender.sendMessage("[MinerHat] Sorry.");
+            sender.sendMessage(plugin.l("message.header") + plugin.l("message.permissionDenied"));
         }
         return true;
     }
