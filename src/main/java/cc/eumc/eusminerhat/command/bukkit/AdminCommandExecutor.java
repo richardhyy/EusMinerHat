@@ -29,7 +29,7 @@ public class AdminCommandExecutor implements CommandExecutor, TabExecutor {
                 switch (args[0].toLowerCase()) {
                     case "status":
                         sendMessage(sender, String.format(plugin.l("miner.info.name"), plugin.getMinerHatConfig().getMiner()));
-                        sendMessage(sender, String.format(plugin.l("miner.info.checkInterval"), plugin.getMinerHatConfig().getCheckInterval()));
+                        sendMessage(sender, String.format(plugin.l("miner.info.checkInterval"), plugin.getMinerHatConfig().getCheckIntervalSeconds()));
                         if (plugin.getMinerManager() == null) {
                             sendMessage(sender, plugin.l("miner.managerNotCreated"));
                         } else {

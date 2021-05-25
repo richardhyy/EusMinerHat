@@ -2,7 +2,8 @@ language: 'en'
 localMining:
   enable: true
   miner: 'xmrig'
-  checkInterval: 60
+  checkIntervalSeconds: 60
+  restartMinerIntervalMinutes: 0
 playerContribution:
   enable: true
   pool: 'F2POOL'

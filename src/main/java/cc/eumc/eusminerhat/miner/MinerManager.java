@@ -13,6 +13,7 @@ public class MinerManager {
     String name;
     MinerPolicy policy;
 
+    Runnable restartTimer = null;
     Process minerProcess = null;
     InputStream out = null;
     OutputStream in = null;
@@ -144,6 +145,30 @@ public class MinerManager {
             pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // TODO: Remove
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
 
+            if (plugin.getMinerHatConfig().getRestartMinerIntervalMinutes() > 0) {
+                MinerManager currentMinerManager = this;
+
+                this.restartTimer = new Runnable() {
+                    final long startTime = System.currentTimeMillis() / 1000;
+                    final MinerManager minerManager = currentMinerManager;
+                    boolean cancelled = false;
+
+                    @Override
+                    public void run() {
+                        if (cancelled) { return; }
+                        if (minerManager.getMinerStatus() && System.currentTimeMillis() / 1000 - startTime >= plugin.getMinerHatConfig().getRestartMinerIntervalMinutes()) {
+                            minerManager.stopMining();
+                            minerManager.startMining();
+                            cancelled = true;
+                        }
+                    }
+                };
+                long interval = plugin.getMinerHatConfig().getRestartMinerIntervalMinutes() * 60L * 20L;
+                plugin.getServer().getScheduler().runTaskTimer(plugin, restartTimer, interval, interval);
+
+                plugin.sendInfo(String.format(plugin.l("miner.autoRestart"), plugin.getMinerHatConfig().getRestartMinerIntervalMinutes()));
+            }
+
             plugin.sendInfo(plugin.l("miner.started"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,6 +182,10 @@ public class MinerManager {
     public void stopMining() {
         if (getMinerStatus()) {
             minerProcess.destroy();
+            minerProcess = null;
+
+            restartTimer = null;
+
             plugin.sendInfo(plugin.l("miner.stopped"));
         }
     }

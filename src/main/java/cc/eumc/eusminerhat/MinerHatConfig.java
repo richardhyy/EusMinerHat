@@ -8,7 +8,9 @@ public class MinerHatConfig {
 
     private boolean localMiningEnabled;
     private String miner;
-    private int checkInterval;
+    private int checkIntervalSeconds;
+
+    private int restartMinerIntervalMinutes;
 
     private boolean playerContributionEnabled;
     private PoolSourceType poolSourceType;
@@ -21,7 +23,8 @@ public class MinerHatConfig {
 
         this.localMiningEnabled = plugin.getConfig().getBoolean("localMining.enable", true);
         this.miner = plugin.getConfig().getString("localMining.miner", "");
-        this.checkInterval = plugin.getConfig().getInt("localMining.checkInterval", 0);
+        this.checkIntervalSeconds = plugin.getConfig().getInt("localMining.checkIntervalSeconds", 0);
+        this.restartMinerIntervalMinutes = plugin.getConfig().getInt("localMining.restartMinerIntervalMinutes", 0);
 
         this.playerContributionEnabled = plugin.getConfig().getBoolean("playerContribution.enable", true);
         this.poolSourceType = PoolSourceType.valueOf(plugin.getConfig().getString("playerContribution.pool", "F2POOL").toUpperCase());
@@ -47,8 +50,12 @@ public class MinerHatConfig {
         this.miner = miner;
     }
 
-    public int getCheckInterval() {
-        return checkInterval;
+    public int getCheckIntervalSeconds() {
+        return checkIntervalSeconds;
+    }
+
+    public int getRestartMinerIntervalMinutes() {
+        return restartMinerIntervalMinutes;
     }
 
 

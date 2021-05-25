@@ -139,15 +139,16 @@ public final class MinerHat extends JavaPlugin {
             this.checkTask = null;
         }
 
-        if (config.getCheckInterval() > 0) { // check timer will be disabled if interval is less or equal than 0
-            long interval = config.getCheckInterval() * 20L;
+        if (config.getCheckIntervalSeconds() > 0) { // check timer will be disabled if interval is less or equal than 0
+            long interval = config.getCheckIntervalSeconds() * 20L;
             this.checkTask = getServer().getScheduler().runTaskTimer(this, new CheckIntervalTimer(this), interval, interval);
         }
     }
 
     void printMinerInformation() {
         sendInfo(String.format(l("miner.info.name"), config.getMiner()));
-        sendInfo(String.format(l("miner.info.checkInterval"), config.getCheckInterval()));
+        sendInfo(String.format(l("miner.info.checkInterval"), config.getCheckIntervalSeconds()));
+        sendInfo(String.format(l("miner.info.restartInterval"), getMinerHatConfig().getRestartMinerIntervalMinutes()));
     }
 
     public String l(String stringToken) {
