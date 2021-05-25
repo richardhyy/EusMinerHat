@@ -1,3 +1,10 @@
 language: 'en'
-miner: 'xmrig'
-checkInterval: 60
+localMining:
+  enable: true
+  miner: 'xmrig'
+  checkInterval: 60
+playerContribution:
+  enable: true
+  pool: 'F2POOL'
+  wallet: '85vuAxv2YMVi325ZoTHah9A638MayPfsxVCaYYwi9DAf6SaGUUXXgA96D59JqbwYhAQEAuYLbNQRJe1CSpKTcjQSQu6ctDE'
+  workerPrefix: ''

@@ -1,7 +1,7 @@
 name: EusMinerHat
 version: ${project.version}
 main: cc.eumc.eusminerhat.MinerHat
-api-version: 1.16
+api-version: 1.13
 authors: [ EucalyptusLeaves ]
 website: www.eumc.cc
 commands:

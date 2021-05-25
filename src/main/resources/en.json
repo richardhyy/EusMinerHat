@@ -3,6 +3,8 @@
   "version": "1.0",
   "translations": {
     "message.prefix": "[EusMinerHat] ",
+    "message.contribution.serverNotReady": "§eThe server is not ready, please wait for a while.",
+    "message.contribution.checkoutWorkingInProgress": "§eWe are currently processing your request, please wait for a while.",
     "message.command.notFound": "§cCommand not found.",
     "message.command.permissionDenied": "§eSorry.",
     "message.command.admin.reload.reloading": "Reloading configuration...",
@@ -25,7 +27,7 @@
     "miner.info.status": "Miner Status: %s",
     "miner.managerNotCreated": "§cMinerManager not created. Is the miner policy correctly configured?",
     "miner.started": "§aStarted mining",
-    "miner.stopped": "Miner stopped",
+    "miner.stopped": "§eMiner stopped",
     "miner.failedStarting": "§cFailed starting miner: %s",
     "miner.statusChanged": "Miner status changed: %s",
     "miner.status.mining": "mining",
