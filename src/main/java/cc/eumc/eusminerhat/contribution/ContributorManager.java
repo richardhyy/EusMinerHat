@@ -45,10 +45,14 @@ public class ContributorManager {
         }
     }
 
-    public void checkoutRevenue24h(Player player, BiConsumer<Double, Double> onSuccess, Consumer<Exception> onError) {
+    public String getWorkerNameFor(Player player) {
         UUID playerUUID = player.getUniqueId();
         String uuidStr = playerUUID.toString();
-        String trimmed = plugin.getMinerHatConfig().getWorkerPrefix() + uuidStr.substring(0, 6) + uuidStr.substring(26, 32);
+        return plugin.getMinerHatConfig().getWorkerPrefix() + uuidStr.substring(0, 6) + uuidStr.substring(26, 32);
+    }
+
+    public void checkoutRevenue24h(Player player, BiConsumer<Double, Double> onSuccess, Consumer<Exception> onError) {
+        String trimmed = getWorkerNameFor(player);
 
         if (checkoutWorkingInProgress.getOrDefault(trimmed, false)) {
             onError.accept(new ContributionException(ContributionException.ContributionExceptionType.CHECKOUT_WORKING_IN_PROGRESS, plugin.l("message.contribution.checkoutWorkingInProgress")));
@@ -87,7 +91,7 @@ public class ContributorManager {
                 int walletHashrate = this.poolSource.getWalletHashrate24h();
                 double walletRevenue = this.poolSource.getWalletRevenue24h();
                 double playerPercentage = (double)workerHashrate / (double)walletHashrate;
-                double playerShare = walletRevenue * playerPercentage;
+                double playerShare = walletRevenue * playerPercentage * plugin.getMinerHatConfig().getRevenueFactor();
                 depositPlayerRevenue(player, playerShare);
                 recordPlayerHashrate(player, walletHashrate);
                 onSuccess.accept(getPlayerRevenue(player), playerShare);
@@ -155,5 +159,9 @@ public class ContributorManager {
      */
     public double withdrawPlayerRevenue(Player player, double amount) throws ContributionException {
         return getPlayerContribution(player).withdraw(amount);
+    }
+
+    public PoolSource getPoolSource() {
+        return this.poolSource;
     }
 }

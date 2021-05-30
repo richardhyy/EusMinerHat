@@ -3,6 +3,7 @@ package cc.eumc.eusminerhat.command.bukkit;
 import cc.eumc.eusminerhat.MinerHat;
 import cc.eumc.eusminerhat.exception.ContributionException;
 import cc.eumc.eusminerhat.util.Timestamp;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
     MinerHat plugin;
     private final String playerPermissionNode = "minerhat.contributor";
-    private final String[] commands = {"help", "check", "revenue", "history"};
+    private final String[] commands = {"help", "check", "revenue", "history", "mining"};
 
     public PlayerCommandExecutor(MinerHat plugin) {
         this.plugin = plugin;
@@ -70,6 +71,26 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
                         sendMessage(sender, String.format(plugin.l("message.command.contribution.revenueHistory"), historyMessage));
                         break;
 
+                    case "mining":
+                        sendMessage(sender, plugin.l("message.command.contribution.miningInformation.header"));
+                        BaseComponent[] clickToCopy =  new ComponentBuilder(plugin.l("message.command.contribution.miningInformation.clickToCopy")).create();
+
+                        TextComponent addressMessage = new TextComponent(String.format(plugin.l("message.command.contribution.miningInformation.address"),
+                                plugin.getContributorManager().getPoolSource().getCryptocurrencyName(),
+                                plugin.getContributorManager().getPoolSource().getWalletAddress()));
+                        addressMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, plugin.getContributorManager().getPoolSource().getWalletAddress()));
+                        addressMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, clickToCopy));
+                        sendMessage(player, addressMessage);
+
+                        TextComponent workerMessage = new TextComponent(String.format(plugin.l("message.command.contribution.miningInformation.worker"),
+                                plugin.getContributorManager().getPoolSource().getCryptocurrencyName(),
+                                plugin.getContributorManager().getWorkerNameFor(player)));
+                        workerMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, plugin.getContributorManager().getWorkerNameFor(player)));
+                        workerMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, clickToCopy));
+                        sendMessage(player, workerMessage);
+
+                        break;
+
                     case "help":
                         sendMessage(sender, plugin.l("message.command.contribution.help"));
                         break;
@@ -86,6 +107,10 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
 
     private void sendMessage(CommandSender sender, String message) {
         sender.sendMessage(plugin.prefixForEachLine(message));
+    }
+
+    private void sendMessage(Player player, TextComponent component) {
+        player.spigot().sendMessage(component);
     }
 
     @Override

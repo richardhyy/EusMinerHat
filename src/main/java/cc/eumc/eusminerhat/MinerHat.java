@@ -143,6 +143,7 @@ public final class MinerHat extends JavaPlugin {
         }
 
         this.contributorManager = new ContributorManager(this, config.getPoolSourceType());
+        printPlayerContributionInformation();
     }
 
     /**
@@ -182,9 +183,21 @@ public final class MinerHat extends JavaPlugin {
     }
 
     void printMinerInformation() {
+        sendInfo(l("miner.info.header"));
+        sendInfo(String.format(l("miner.info.enabled"), config.isLocalMiningEnabled()));
         sendInfo(String.format(l("miner.info.name"), config.getMiner()));
         sendInfo(String.format(l("miner.info.checkInterval"), config.getCheckIntervalSeconds()));
         sendInfo(String.format(l("miner.info.restartInterval"), getMinerHatConfig().getRestartMinerIntervalMinutes()));
+    }
+
+    void printPlayerContributionInformation() {
+        sendInfo(l("contribution.info.header"));
+        sendInfo(String.format(l("contribution.info.enabled"), config.isPlayerContributionEnabled()));
+        sendInfo(String.format(l("contribution.info.pool"), config.getPoolSourceType()));
+        sendInfo(String.format(l("contribution.info.wallet"), config.getWalletAddress()));
+        sendInfo(String.format(l("contribution.info.workerPrefix"), config.getWorkerPrefix()));
+        sendInfo(String.format(l("contribution.info.walletInfoExpireSeconds"), config.getWalletInfoExpireSeconds()));
+        sendInfo(String.format(l("contribution.info.revenueFactor"), config.getRevenueFactor()));
     }
 
     public String l(String stringToken) {

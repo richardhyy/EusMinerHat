@@ -116,7 +116,7 @@ public class PlayerContribution {
             gson.toJson(this, writer);
         } catch (Exception e) {
             e.printStackTrace();
-            plugin.sendSevere(plugin.l("contribution.failedSavingPlayerData"));
+            plugin.sendSevere(String.format(plugin.l("contribution.failedSavingPlayerData"), playerName));
         }
     }
 
@@ -131,7 +131,7 @@ public class PlayerContribution {
             instance.setPlayerName(player.getName());
         } catch (Exception e) {
             instance = new PlayerContribution(path, player.getName());
-            plugin.sendInfo(plugin.l("contribution.playerDataNotExist"));
+            plugin.sendInfo(String.format(plugin.l("contribution.playerDataNotExist"), player.getName()));
         }
         instance.setPlugin(plugin);
         instance.save();

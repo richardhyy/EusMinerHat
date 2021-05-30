@@ -23,7 +23,7 @@ public class F2PoolXMR extends PoolSource {
     JsonObject walletInfoObject = null;
 
     public F2PoolXMR(MinerHat plugin, String walletAddress, Consumer<PoolSource> walletInfoRefreshCallback) {
-        super(plugin, walletAddress, walletInfoRefreshCallback);
+        super(plugin, walletAddress, "XMR", walletInfoRefreshCallback);
     }
 
     @Override

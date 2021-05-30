@@ -10,14 +10,19 @@ public abstract class PoolSource {
     MinerHat plugin;
     protected String walletAddress;
     Consumer<PoolSource> walletInfoRefreshCallback;
+    final String cryptocurrencyName;
 
     public String getWalletAddress() {
         return walletAddress;
     }
+    public String getCryptocurrencyName() {
+        return cryptocurrencyName;
+    }
 
-    PoolSource(MinerHat plugin, String walletAddress, Consumer<PoolSource> walletInfoRefreshCallback) {
+    PoolSource(MinerHat plugin, String walletAddress, String cryptocurrencyName, Consumer<PoolSource> walletInfoRefreshCallback) {
         this.plugin = plugin;
         this.walletAddress = walletAddress;
+        this.cryptocurrencyName = cryptocurrencyName;
         this.walletInfoRefreshCallback = walletInfoRefreshCallback;
     }
 
