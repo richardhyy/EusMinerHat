@@ -220,7 +220,12 @@ public final class MinerHat extends JavaPlugin {
     }
 
     private void exportDefaultLanguage() throws Exception {
+        File enLanguageFile = new File(LanguagePath + "/en.json");
+        if (enLanguageFile.exists()) {
+            return;
+        }
+
         InputStream in = getResource("en.json");
-        Files.copy(Objects.requireNonNull(in), new File(LanguagePath + "/en.json").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(Objects.requireNonNull(in), enLanguageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }
