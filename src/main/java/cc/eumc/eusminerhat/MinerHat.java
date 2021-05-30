@@ -188,7 +188,7 @@ public final class MinerHat extends JavaPlugin {
     }
 
     public String l(String stringToken) {
-        return localeManager.getLocalized(stringToken);
+        return localeManager.getLocalized(stringToken).replace("&", "§");
     }
 
     public void sendSevere(String message) {

@@ -62,8 +62,8 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
                         plugin.getContributorManager().getPlayerContribution(player).getRevenueChangeHistoryCopy()
                                 .forEach((timeInterval, amount) -> {
                                     historyMessage.append(Timestamp.toFormattedTime(timeInterval));
-                                    historyMessage.append(" | ");
-                                    historyMessage.append(amount >= 0 ? "+" : "-");
+                                    historyMessage.append("§7 | ");
+                                    historyMessage.append(amount >= 0 ? "§2+§r" : "§4-§r");
                                     historyMessage.append(amount);
                                     historyMessage.append("\n");
                                 });
