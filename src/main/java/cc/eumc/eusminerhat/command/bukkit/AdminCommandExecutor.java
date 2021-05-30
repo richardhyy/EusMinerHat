@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public class AdminCommandExecutor implements CommandExecutor, TabExecutor {
     MinerHat plugin;
-    private String adminPermissionNode = "minerhat.admin";
-    private String[] commands = {"help", "status", "log", "start", "stop", "policy", "reload"};
-    private String[] policySubCommands = {"list", "set"};
+    private final String adminPermissionNode = "minerhat.admin";
+    private final String[] commands = {"help", "status", "log", "start", "stop", "policy", "reload"};
+    private final String[] policySubCommands = {"list", "set"};
 
     public AdminCommandExecutor(MinerHat plugin) {
         this.plugin = plugin;

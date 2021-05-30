@@ -1,18 +1,10 @@
 package cc.eumc.eusminerhat.miner;
 
-import cc.eumc.eusminerhat.MinerHat;
-import cc.eumc.eusminerhat.exception.MinerException;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.util.FileUtil;
+import com.google.gson.stream.JsonReader;
 
-import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class MinerPolicy {
     private String description;
@@ -44,9 +36,9 @@ public class MinerPolicy {
     }
 
 
-    public static MinerPolicy loadPolicy(Path filePath) throws IOException {
+    public static MinerPolicy loadPolicy(String filePath) throws IOException {
         Gson gson = new Gson();
-        return gson.fromJson(String.join( "\n", Files.readAllLines(filePath)), MinerPolicy.class);
+        return gson.fromJson(new JsonReader(new FileReader(filePath)), MinerPolicy.class);
     }
 
 //    public MinerPolicy(MinerHat plugin, String minerName) throws Exception {

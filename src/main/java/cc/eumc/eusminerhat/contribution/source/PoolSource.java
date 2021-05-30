@@ -9,15 +9,16 @@ import java.util.function.Consumer;
 public abstract class PoolSource {
     MinerHat plugin;
     protected String walletAddress;
+    Consumer<PoolSource> walletInfoRefreshCallback;
 
     public String getWalletAddress() {
         return walletAddress;
     }
 
-
-    PoolSource(MinerHat plugin, String walletAddress) {
+    PoolSource(MinerHat plugin, String walletAddress, Consumer<PoolSource> walletInfoRefreshCallback) {
         this.plugin = plugin;
         this.walletAddress = walletAddress;
+        this.walletInfoRefreshCallback = walletInfoRefreshCallback;
     }
 
     /**

@@ -3,16 +3,16 @@ package cc.eumc.eusminerhat;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.FileReader;
 
 public class LocaleManager {
     MinerHat plugin;
     JsonObject languageObject;
 
     public static LocaleManager createLocaleManager(MinerHat plugin, String language) throws Exception {
-        JsonElement jelement = new JsonParser().parse(Files.readString(Path.of(plugin.getLanguagePath() + "/" + language + ".json")));
+        JsonElement jelement = new JsonParser().parse(new JsonReader(new FileReader((plugin.getLanguagePath() + "/" + language + ".json"))));
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("translations");
         return new LocaleManager(plugin, jobject);

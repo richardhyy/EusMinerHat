@@ -9,3 +9,4 @@ playerContribution:
   pool: 'F2POOL'
   wallet: '85vuAxv2YMVi325ZoTHah9A638MayPfsxVCaYYwi9DAf6SaGUUXXgA96D59JqbwYhAQEAuYLbNQRJe1CSpKTcjQSQu6ctDE'
   workerPrefix: ''
+  walletInfoExpireSeconds: 600

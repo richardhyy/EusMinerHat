@@ -1,6 +1,8 @@
 package cc.eumc.eusminerhat;
 
 import cc.eumc.eusminerhat.command.bukkit.AdminCommandExecutor;
+import cc.eumc.eusminerhat.command.bukkit.PlayerCommandExecutor;
+import cc.eumc.eusminerhat.contribution.ContributorManager;
 import cc.eumc.eusminerhat.exception.MinerException;
 import cc.eumc.eusminerhat.listener.PlayerListener;
 import cc.eumc.eusminerhat.miner.MinerManager;
@@ -12,7 +14,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
@@ -20,8 +21,10 @@ public final class MinerHat extends JavaPlugin {
     private MinerManager minerManager;
     private String MinerPath;
     private String LanguagePath;
+    private String PlayerContributionPath;
     private MinerHatConfig config;
     private LocaleManager localeManager;
+    private ContributorManager contributorManager;
     private BukkitTask checkTask;
 
     public MinerManager getMinerManager() {
@@ -33,28 +36,34 @@ public final class MinerHat extends JavaPlugin {
     public String getLanguagePath() {
         return LanguagePath;
     }
+    public String getPlayerContributionPath() { return PlayerContributionPath; }
     public MinerHatConfig getMinerHatConfig() {
         return config;
     }
     public LocaleManager getLocaleManager() {
         return localeManager;
     }
+    public ContributorManager getContributorManager() { return contributorManager; }
 
     @Override
     public void onEnable() {
         this.MinerPath = getDataFolder() + "/miner";
         this.LanguagePath = getDataFolder() + "/language";
+        this.PlayerContributionPath = getDataFolder() + "/contribution";
 
         loadMinerHatConfig();
 
         getCommand("minerhatadmin").setExecutor(new AdminCommandExecutor(this));
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getCommand("minerhat").setExecutor(new PlayerCommandExecutor(this));
 
         try {
             registerMiner();
         } catch (MinerException e) {
             sendSevere(l("policy.failure.loading"));
         }
+        registerPlayerContribution();
+
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
     }
 
     @Override
@@ -103,6 +112,11 @@ public final class MinerHat extends JavaPlugin {
             }
         }
 
+        File contributionDir = new File(PlayerContributionPath);
+        if (!contributionDir.exists()) {
+            contributionDir.mkdir();
+        }
+
         this.config = new MinerHatConfig(this);
 
         try {
@@ -111,11 +125,28 @@ public final class MinerHat extends JavaPlugin {
             e.printStackTrace();
             sendSevere(String.format("§cFailed loading language pack: %s.json", config.getLanguage()));
         }
-
     }
 
     /**
-     * Create a new MinerManager and RunningCheckTimer.
+     * Set up ContributionManager for player commands if player contribution is enabled.
+     */
+    public void registerPlayerContribution() {
+//        if (this.contributorManager != null) {
+//            this.contributorManager = null;
+//        }
+
+        if (!config.isPlayerContributionEnabled()) {
+            // Do nothing here!
+            // So that third-party plugins can still deal with the remaining player revenue after this function being disabled
+
+            //return; // Player contribution disabled
+        }
+
+        this.contributorManager = new ContributorManager(this, config.getPoolSourceType());
+    }
+
+    /**
+     * Create a new MinerManager and RunningCheckTimer if local mining is enabled.
      * It will also try to stop the existing miner if needed.
      * @throws MinerException
      */
@@ -125,8 +156,17 @@ public final class MinerHat extends JavaPlugin {
             this.minerManager = null;
         }
 
+        if (this.checkTask != null) { // Attempt to cancel existing timer
+            this.checkTask.cancel();
+            this.checkTask = null;
+        }
+
+        if (!config.isLocalMiningEnabled()) {
+            return; // Local mining disabled
+        }
+
         try {
-            MinerPolicy policy = MinerPolicy.loadPolicy(Paths.get(getMinerPath() + "/" + config.getMiner() + ".json"));
+            MinerPolicy policy = MinerPolicy.loadPolicy(getMinerPath() + "/" + config.getMiner() + ".json");
             this.minerManager = new MinerManager(this, config.getMiner(), policy);
             printMinerInformation();
         } catch (Exception e) {
@@ -134,10 +174,6 @@ public final class MinerHat extends JavaPlugin {
             throw new MinerException(MinerException.MinerExceptionType.FAILED_LOADING_POLICY, "Failed loading miner policy");
         }
 
-        if (this.checkTask != null) { // Attempt to cancel existing timer
-            this.checkTask.cancel();
-            this.checkTask = null;
-        }
 
         if (config.getCheckIntervalSeconds() > 0) { // check timer will be disabled if interval is less or equal than 0
             long interval = config.getCheckIntervalSeconds() * 20L;
