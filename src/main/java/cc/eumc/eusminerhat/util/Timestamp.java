@@ -8,6 +8,6 @@ public class Timestamp {
         return System.currentTimeMillis() / 1000;
     }
     public static String toFormattedTime(long secondSince1970) {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mmX").format(new Date(secondSince1970 * 1000));
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX").format(new Date(secondSince1970 * 1000));
     }
 }
