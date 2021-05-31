@@ -8,7 +8,7 @@ MinerHat is a Minecraft server plugin that utilizes your server at low load to m
 * Toggles for local mining and player contribution modules. (In case your server provider disallows mining on their server, or whatever other reasons.)
 * **Local Mining**
     * **Policies:** Manage your miners
-        * Decide the maximum player count at which the miner should be started
+        * Decide the maximum player count at which the miner should be stopped
     * **Timer for auto-switching miner**
 * **Player Contribution**
     * **Mining pool implement**
@@ -16,7 +16,8 @@ MinerHat is a Minecraft server plugin that utilizes your server at low load to m
 * **Localization Support**
 * *Working with Popular Currency Plugins (WIP)*
 
-
+## Get Started
+**TO USE LOCAL MINING:** You need to put your miner into plugin's directory manually and then configure your mining wallet in the policy file. A detailed tutorial is available at: https://github.com/richardhyy/EusMinerHat/wiki/Quick-Start:-Local-Mining.
 
 ## Commands
 
