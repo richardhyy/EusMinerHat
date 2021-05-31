@@ -39,6 +39,7 @@
     "contribution.info.workerPrefix": "Worker Name Prefix: %s",
     "contribution.info.walletInfoExpireSeconds": "Wallet Info Expire Interval: %s",
     "contribution.info.revenueFactor": "Revenue Factor: %s",
+    "contribution.info.revenueDecimalPlaces": "Revenue Decimal Places: %s",
     "policy.executableExists": "&aMiner %s: executable file exists",
     "policy.createdFolder": "Created folder for miner %s at %s",
     "policy.failure.minerNotFound": "&cMiner %s cannot be found. (%s)",

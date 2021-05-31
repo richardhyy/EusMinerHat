@@ -18,6 +18,7 @@ public class MinerHatConfig {
     private String workerPrefix;
     private int walletInfoExpireSeconds;
     private double revenueFactor;
+    private int revenueDecimalPlaces;
 //    private PayoutInterval payoutInterval;
 
     public MinerHatConfig(MinerHat plugin) {
@@ -34,6 +35,7 @@ public class MinerHatConfig {
         this.workerPrefix = plugin.getConfig().getString("playerContribution.workerPrefix", "");
         this.walletInfoExpireSeconds = plugin.getConfig().getInt("playerContribution.walletInfoExpireSeconds", 600); // <=0: never expire
         this.revenueFactor = plugin.getConfig().getDouble("playerContribution.revenueFactor", 1.0);
+        this.revenueDecimalPlaces = plugin.getConfig().getInt("playerContribution.revenueDecimalPlaces", 3);
 //        this.payoutInterval = PayoutInterval.valueOf(plugin.getConfig().getString("playerContribution.payoutInterval", "HOURLY").toUpperCase());
     }
 
@@ -88,6 +90,9 @@ public class MinerHatConfig {
         return revenueFactor;
     }
 
+    public int getRevenueDecimalPlaces() {
+        return revenueDecimalPlaces;
+    }
 //    public PayoutInterval getPayoutInterval() {
 //        return payoutInterval;
 //    }

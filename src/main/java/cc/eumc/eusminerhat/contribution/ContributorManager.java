@@ -5,6 +5,7 @@ import cc.eumc.eusminerhat.contribution.source.F2PoolXMR;
 import cc.eumc.eusminerhat.contribution.source.PoolSource;
 import cc.eumc.eusminerhat.contribution.source.PoolSourceType;
 import cc.eumc.eusminerhat.exception.ContributionException;
+import cc.eumc.eusminerhat.util.Decimal;
 import cc.eumc.eusminerhat.util.Timestamp;
 import org.bukkit.entity.Player;
 
@@ -92,6 +93,7 @@ public class ContributorManager {
                 double walletRevenue = this.poolSource.getWalletRevenue24h();
                 double playerPercentage = (double)workerHashrate / (double)walletHashrate;
                 double playerShare = walletRevenue * playerPercentage * plugin.getMinerHatConfig().getRevenueFactor();
+                playerShare = Decimal.round(playerShare, plugin.getMinerHatConfig().getRevenueDecimalPlaces());
                 depositPlayerRevenue(player, playerShare);
                 recordPlayerHashrate(player, walletHashrate);
                 onSuccess.accept(getPlayerRevenue(player), playerShare);

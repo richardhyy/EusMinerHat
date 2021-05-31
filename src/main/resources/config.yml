@@ -11,3 +11,4 @@ playerContribution:
   workerPrefix: ''
   walletInfoExpireSeconds: 600
   revenueFactor: 100000000.0
+  revenueDecimalPlaces: 3
