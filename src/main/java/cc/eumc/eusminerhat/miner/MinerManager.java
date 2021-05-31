@@ -134,7 +134,12 @@ public class MinerManager {
         }
         try {
             String[] args = getCommandArguments();
-            args[0] = plugin.getMinerPath() + "/" + name + "/" + args[0]; // to absolute path
+            // Fix: #2
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                args[0] = plugin.getMinerPath() + "/" + name + "/" + args[0]; // to absolute path
+            } else if (!args[0].startsWith("./")) {
+                args[0] = "./" + args[0];
+            }
             ProcessBuilder pb = new ProcessBuilder(args);
 
             pb.directory(new File(plugin.getMinerPath() + "/" + name));
