@@ -15,7 +15,7 @@
     "message.command.contribution.miningInformation.clickToCopy": "Click to copy",
     "message.command.contribution.miningInformation.address": "&6[%s]&r &n&lCopy Address&r &o(%s)",
     "message.command.contribution.miningInformation.worker": "&6[%s]&r &n&lCopy Worker Name&r &o(%s)",
-    "message.command.contribution.help": "===== EusMinerHat =====\n/minerhat check:  Checkout your payment\n/minerhat revenue:  Get your revenue information\n/minerhat history:  List your revenue change history",
+    "message.command.contribution.help": "===== EusMinerHat =====\n/minerhat check:  Checkout your payment\n/minerhat revenue:  Get your revenue information\n/minerhat history:  List your revenue change history\n/minerhat mining:  Get mining information",
     "message.command.playerOnly": "&eThis command is designed for players.",
     "message.command.notFound": "&cCommand not found.",
     "message.command.permissionDenied": "&eSorry.",

@@ -73,21 +73,25 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
 
                     case "mining":
                         sendMessage(sender, plugin.l("message.command.contribution.miningInformation.header"));
-                        BaseComponent[] clickToCopy =  new ComponentBuilder(plugin.l("message.command.contribution.miningInformation.clickToCopy")).create();
 
-                        TextComponent addressMessage = new TextComponent(String.format(plugin.l("message.command.contribution.miningInformation.address"),
-                                plugin.getContributorManager().getPoolSource().getCryptocurrencyName(),
-                                plugin.getContributorManager().getPoolSource().getWalletAddress()));
-                        addressMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, plugin.getContributorManager().getPoolSource().getWalletAddress()));
-                        addressMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, clickToCopy));
-                        sendMessage(player, addressMessage);
+                        String workerName = plugin.getContributorManager().getWorkerNameFor(player);
 
-                        TextComponent workerMessage = new TextComponent(String.format(plugin.l("message.command.contribution.miningInformation.worker"),
+                        if (!plugin.getMinerHatConfig().getPlayerMiningNoteMessage().isEmpty()) {
+                            sendCopyableMessage(player, plugin.parseFormatCode(plugin.getMinerHatConfig().getPlayerMiningNoteMessage()
+                                    .replace("{address}", plugin.getContributorManager().getPoolSource().getWalletAddress())
+                                    .replace("{worker}", workerName)),
+                                    plugin.getMinerHatConfig().getPlayerMiningNoteValue());
+                        }
+
+                        sendCopyableMessage(player, String.format(plugin.l("message.command.contribution.miningInformation.address"),
                                 plugin.getContributorManager().getPoolSource().getCryptocurrencyName(),
-                                plugin.getContributorManager().getWorkerNameFor(player)));
-                        workerMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, plugin.getContributorManager().getWorkerNameFor(player)));
-                        workerMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, clickToCopy));
-                        sendMessage(player, workerMessage);
+                                plugin.getContributorManager().getPoolSource().getWalletAddress()),
+                                plugin.getContributorManager().getPoolSource().getWalletAddress());
+
+                        sendCopyableMessage(player, String.format(plugin.l("message.command.contribution.miningInformation.worker"),
+                                plugin.getContributorManager().getPoolSource().getCryptocurrencyName(),
+                                workerName),
+                                workerName);
 
                         break;
 
@@ -111,6 +115,14 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
 
     private void sendMessage(Player player, TextComponent component) {
         player.spigot().sendMessage(component);
+    }
+
+    private void sendCopyableMessage(Player player, String message, String value) {
+        BaseComponent[] clickToCopy =  new ComponentBuilder(plugin.l("message.command.contribution.miningInformation.clickToCopy")).create();
+        TextComponent workerMessage = new TextComponent(message);
+        workerMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, value));
+        workerMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, clickToCopy));
+        sendMessage(player, workerMessage);
     }
 
     @Override

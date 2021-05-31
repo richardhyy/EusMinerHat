@@ -201,7 +201,11 @@ public final class MinerHat extends JavaPlugin {
     }
 
     public String l(String stringToken) {
-        return localeManager.getLocalized(stringToken).replace("&", "§");
+        return parseFormatCode(localeManager.getLocalized(stringToken));
+    }
+
+    public String parseFormatCode(String text) {
+        return text.replace("&", "§");
     }
 
     public void sendSevere(String message) {

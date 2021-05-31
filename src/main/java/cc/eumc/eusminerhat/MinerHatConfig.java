@@ -15,6 +15,8 @@ public class MinerHatConfig {
     private boolean playerContributionEnabled;
     private PoolSourceType poolSourceType;
     private String walletAddress;
+    private String playerMiningNoteMessage;
+    private String playerMiningNoteValue;
     private String workerPrefix;
     private int walletInfoExpireSeconds;
     private double revenueFactor;
@@ -32,6 +34,8 @@ public class MinerHatConfig {
         this.playerContributionEnabled = plugin.getConfig().getBoolean("playerContribution.enable", true);
         this.poolSourceType = PoolSourceType.valueOf(plugin.getConfig().getString("playerContribution.pool", "F2POOL").toUpperCase());
         this.walletAddress = plugin.getConfig().getString("playerContribution.wallet", "85vuAxv2YMVi325ZoTHah9A638MayPfsxVCaYYwi9DAf6SaGUUXXgA96D59JqbwYhAQEAuYLbNQRJe1CSpKTcjQSQu6ctDE");
+        this.playerMiningNoteMessage = plugin.getConfig().getString("playerContribution.playerMiningNote.message", "");
+        this.playerMiningNoteValue = plugin.getConfig().getString("playerContribution.playerMiningNote.value", "");
         this.workerPrefix = plugin.getConfig().getString("playerContribution.workerPrefix", "");
         this.walletInfoExpireSeconds = plugin.getConfig().getInt("playerContribution.walletInfoExpireSeconds", 600); // <=0: never expire
         this.revenueFactor = plugin.getConfig().getDouble("playerContribution.revenueFactor", 1.0);
@@ -76,6 +80,14 @@ public class MinerHatConfig {
 
     public String getWalletAddress() {
         return walletAddress;
+    }
+
+    public String getPlayerMiningNoteMessage() {
+        return playerMiningNoteMessage;
+    }
+
+    public String getPlayerMiningNoteValue() {
+        return playerMiningNoteValue;
     }
 
     public String getWorkerPrefix() {
