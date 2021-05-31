@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 public class AdminCommandExecutor implements CommandExecutor, TabExecutor {
     MinerHat plugin;
     private final String adminPermissionNode = "minerhat.admin";
-    private final String[] commands = {"help", "status", "log", "start", "stop", "policy", "reload"};
-    private final String[] policySubCommands = {"list", "set"};
+    private final String[] commands = {"help", "status", "log", "start", "stop", "reload"};
+//    private final String[] policySubCommands = {"list", "set"};
 
     public AdminCommandExecutor(MinerHat plugin) {
         this.plugin = plugin;
@@ -110,15 +110,15 @@ public class AdminCommandExecutor implements CommandExecutor, TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (!sender.hasPermission(adminPermissionNode)) return new ArrayList<>();
 
-        if (args.length > 2)
-            return new ArrayList<>();
-        else if (args.length == 2)
-            if (args[0].equalsIgnoreCase("policy"))
-                // Fix: Tab complete won't work for sub-commands
-                return Arrays.stream(policySubCommands).filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
-            else
-                return new ArrayList<>();
-        else if (args.length == 1)
+//        if (args.length > 2)
+//            return new ArrayList<>();
+//        else if (args.length == 2)
+//            if (args[0].equalsIgnoreCase("policy"))
+//                // Fix: Tab complete won't work for sub-commands
+//                return Arrays.stream(policySubCommands).filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+//            else
+//                return new ArrayList<>();
+        if (args.length == 1)
             return Arrays.stream(commands).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
         else
             return Arrays.asList(commands);
