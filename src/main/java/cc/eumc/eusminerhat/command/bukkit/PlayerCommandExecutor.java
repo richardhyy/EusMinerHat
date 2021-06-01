@@ -63,11 +63,13 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
                         StringBuilder historyMessage = new StringBuilder();
                         plugin.getContributorManager().getPlayerContribution(player).getRevenueChangeHistoryCopy()
                                 .forEach((timeInterval, amount) -> {
-                                    historyMessage.append(Timestamp.toFormattedTime(timeInterval));
-                                    historyMessage.append("§7 | ");
-                                    historyMessage.append(amount >= 0 ? "§2+§r" : "§4-§r");
-                                    historyMessage.append(amount);
-                                    historyMessage.append("\n");
+                                    StringBuilder entry = new StringBuilder();
+                                    entry.append(Timestamp.toFormattedTime(timeInterval));
+                                    entry.append("§7 | ");
+                                    entry.append(amount >= 0 ? "§2+§r" : "§4-§r");
+                                    entry.append(Math.abs(amount));
+                                    entry.append("\n");
+                                    historyMessage.insert(0, entry);
                                 });
                         sendMessage(sender, String.format(plugin.l("message.command.contribution.revenueHistory"), historyMessage));
                         break;
