@@ -125,6 +125,8 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
                                 double amount = Double.parseDouble(args[1]);
                                 if (amount <= 0) {
                                     throw new NumberFormatException("Exchange amount must be greater than zero.");
+                                } else if (amount < plugin.getMinerHatConfig().getMinimumExchangeAmount()) {
+                                    throw new ContributionException(ContributionException.ContributionExceptionType.EXCHANGE_AMOUNT_TOO_SMALL, "Exchange amount less than minimum amount configured.");
                                 }
 
                                 // withdraw from revenue account
@@ -134,15 +136,24 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
                                 double convertedAmount = amount * plugin.getMinerHatConfig().getExchangeRateToServerMoney();
                                 plugin.getEconomy().depositPlayer(player, convertedAmount);
 
+                                String formattedAmount = plugin.getEconomy().format(convertedAmount);
+                                if (!formattedAmount.contains("" + convertedAmount)) { // In case too small amount of money can't be formatted correctly by vault
+                                    formattedAmount = "" + convertedAmount;
+                                }
                                 sendMessage(player, String.format(plugin.l("message.command.contribution.exchange.success"),
-                                                    amount, plugin.getEconomy().format(convertedAmount)));
+                                                    amount, formattedAmount));
                             } catch (NumberFormatException ex) {
                                 sendMessage(player, plugin.l("message.command.contribution.exchange.illegalAmount"));
                             } catch (ContributionException ex) {
-                                if (ex.getType() == ContributionException.ContributionExceptionType.NOT_ENOUGH_REVENUE) {
-                                    sendMessage(player, plugin.l("message.command.contribution.exchange.notEnoughRevenue"));
-                                } else {
-                                    sendMessage(player, String.format(plugin.l("message.command.contribution.exchange.serverError"), ex.getMessage()));
+                                switch (ex.getType()) {
+                                    case NOT_ENOUGH_REVENUE:
+                                        sendMessage(player, plugin.l("message.command.contribution.exchange.notEnoughRevenue"));
+                                        break;
+                                    case EXCHANGE_AMOUNT_TOO_SMALL:
+                                        sendMessage(player, String.format(plugin.l("message.command.contribution.exchange.amountTooSmall"), plugin.getMinerHatConfig().getMinimumExchangeAmount()));
+                                        break;
+                                    default:
+                                        sendMessage(player, String.format(plugin.l("message.command.contribution.exchange.serverError"), ex.getMessage()));
                                 }
                             } catch (Exception ex) {
                                 ex.printStackTrace(); // log the unexpected exception

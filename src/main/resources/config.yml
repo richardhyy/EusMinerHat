@@ -18,3 +18,4 @@ playerContribution:
   economyIntegration:
     enable: false
     exchangeRateToServerMoney: 1.0
+    minimumExchangeAmount: 0.1
