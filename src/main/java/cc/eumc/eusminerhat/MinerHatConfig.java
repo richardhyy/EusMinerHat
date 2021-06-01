@@ -22,6 +22,8 @@ public class MinerHatConfig {
     private double revenueFactor;
     private int revenueDecimalPlaces;
 //    private PayoutInterval payoutInterval;
+    private boolean economyIntegrationEnabled;
+    private double exchangeRateToServerMoney;
 
     public MinerHatConfig(MinerHat plugin) {
         this.language = plugin.getConfig().getString("language", "en");
@@ -41,6 +43,8 @@ public class MinerHatConfig {
         this.revenueFactor = plugin.getConfig().getDouble("playerContribution.revenueFactor", 1.0);
         this.revenueDecimalPlaces = plugin.getConfig().getInt("playerContribution.revenueDecimalPlaces", 3);
 //        this.payoutInterval = PayoutInterval.valueOf(plugin.getConfig().getString("playerContribution.payoutInterval", "HOURLY").toUpperCase());
+        this.economyIntegrationEnabled = plugin.getConfig().getBoolean("playerContribution.economyIntegration.enable", false);
+        this.exchangeRateToServerMoney = plugin.getConfig().getDouble("playerContribution.economyIntegration.exchangeRateToServerMoney", 1.0);
     }
 
     public String getLanguage() {
@@ -105,7 +109,16 @@ public class MinerHatConfig {
     public int getRevenueDecimalPlaces() {
         return revenueDecimalPlaces;
     }
+
 //    public PayoutInterval getPayoutInterval() {
 //        return payoutInterval;
 //    }
+
+    public boolean isEconomyIntegrationEnabled() {
+        return economyIntegrationEnabled;
+    }
+
+    public double getExchangeRateToServerMoney() {
+        return exchangeRateToServerMoney;
+    }
 }

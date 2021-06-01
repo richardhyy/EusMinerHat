@@ -6,7 +6,7 @@
 
     <groupId>cc.eumc</groupId>
     <artifactId>EusMinerHat</artifactId>
-    <version>1.0.1</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
 
     <name>EusMinerHat</name>
@@ -63,8 +63,8 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -76,9 +76,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.johnnyjayjay</groupId>
-            <artifactId>spigot-maps</artifactId>
-            <version>2.1.1</version>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

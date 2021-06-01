@@ -2,6 +2,7 @@ name: EusMinerHat
 version: ${project.version}
 main: cc.eumc.eusminerhat.MinerHat
 api-version: 1.13
+softdepend: [Vault]
 authors: [ EucalyptusLeaves ]
 website: www.eumc.cc
 commands:

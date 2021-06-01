@@ -7,7 +7,9 @@ import cc.eumc.eusminerhat.exception.MinerException;
 import cc.eumc.eusminerhat.listener.PlayerListener;
 import cc.eumc.eusminerhat.miner.MinerManager;
 import cc.eumc.eusminerhat.miner.MinerPolicy;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -27,6 +29,8 @@ public final class MinerHat extends JavaPlugin {
     private ContributorManager contributorManager;
     private BukkitTask checkTask;
 
+    private Economy economy = null;
+
     public MinerManager getMinerManager() {
         return minerManager;
     }
@@ -44,6 +48,9 @@ public final class MinerHat extends JavaPlugin {
         return localeManager;
     }
     public ContributorManager getContributorManager() { return contributorManager; }
+    public Economy getEconomy() {
+        return economy;
+    }
 
     @Override
     public void onEnable() {
@@ -71,6 +78,18 @@ public final class MinerHat extends JavaPlugin {
         if (minerManager != null) {
             minerManager.stopMining();
         }
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return economy != null;
     }
 
     public void loadMinerHatConfig() {
@@ -124,6 +143,12 @@ public final class MinerHat extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
             sendSevere(String.format("§cFailed loading language pack: %s.json", config.getLanguage()));
+        }
+
+        if (config.isEconomyIntegrationEnabled()) {
+            if (!setupEconomy()) {
+                sendInfo(l("contribution.economyIntegration.vaultNotFound"));
+            }
         }
     }
 
@@ -198,6 +223,8 @@ public final class MinerHat extends JavaPlugin {
         sendInfo(String.format(l("contribution.info.workerPrefix"), config.getWorkerPrefix()));
         sendInfo(String.format(l("contribution.info.walletInfoExpireSeconds"), config.getWalletInfoExpireSeconds()));
         sendInfo(String.format(l("contribution.info.revenueFactor"), config.getRevenueFactor()));
+        sendInfo(String.format(l("contribution.info.economyIntegration.enabled"), config.isEconomyIntegrationEnabled()));
+        sendInfo(String.format(l("contribution.info.economyIntegration.exchangeRateToServerMoney"), config.getExchangeRateToServerMoney()));
     }
 
     public String l(String stringToken) {

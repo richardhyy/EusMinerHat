@@ -15,3 +15,6 @@ playerContribution:
   walletInfoExpireSeconds: 600
   revenueFactor: 100000000.0
   revenueDecimalPlaces: 3
+  economyIntegration:
+    enable: false
+    exchangeRateToServerMoney: 1.0

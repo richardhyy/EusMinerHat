@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
     MinerHat plugin;
     private final String playerPermissionNode = "minerhat.contributor";
-    private final String[] commands = {"help", "check", "revenue", "history", "mining"};
+    private final String[] commands = { "help", "check", "revenue", "history", "mining", "exchange" };
 
     public PlayerCommandExecutor(MinerHat plugin) {
         this.plugin = plugin;
@@ -35,8 +35,9 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
             return true;
         }
         if (sender.hasPermission(playerPermissionNode)) {
+            Player player = (Player) sender;
             if (args.length == 1) {
-                Player player = (Player) sender;
+
                 switch (args[0].toLowerCase()) {
                     case "check":
                         sendMessage(sender, plugin.l("message.command.contribution.checkoutStarted"));
@@ -95,6 +96,14 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
 
                         break;
 
+                    case "exchange": // without the second arg, show exchange help
+                        if (!plugin.getMinerHatConfig().isEconomyIntegrationEnabled() || plugin.getEconomy() == null) {
+                            sendMessage(player, plugin.l("message.command.contribution.exchange.notEnabled"));
+                        } else {
+                            sendMessage(player, plugin.l("message.command.contribution.exchange.argumentSuggestion"));
+                        }
+                        break;
+
                     case "help":
                         sendMessage(sender, plugin.l("message.command.contribution.help"));
                         break;
@@ -102,6 +111,48 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
                     default:
                         sendMessage(sender, plugin.l("message.command.notFound"));
                 }
+
+            } else if (args.length == 2) {
+
+                switch (args[0].toLowerCase()) {
+                    case "exchange": // exchange command with amount
+                        if (!plugin.getMinerHatConfig().isEconomyIntegrationEnabled() || plugin.getEconomy() == null) {
+                            sendMessage(player, plugin.l("message.command.contribution.exchange.notEnabled"));
+                        } else {
+                            try {
+                                double amount = Double.parseDouble(args[1]);
+                                if (amount <= 0) {
+                                    throw new NumberFormatException("Exchange amount must be greater than zero.");
+                                }
+
+                                // withdraw from revenue account
+                                // if there's not enough revenue, an exception would be thrown
+                                plugin.getContributorManager().withdrawPlayerRevenue(player, amount);
+
+                                double convertedAmount = amount * plugin.getMinerHatConfig().getExchangeRateToServerMoney();
+                                plugin.getEconomy().depositPlayer(player, convertedAmount);
+
+                                sendMessage(player, String.format(plugin.l("message.command.contribution.exchange.success"),
+                                                    amount, plugin.getEconomy().format(convertedAmount)));
+                            } catch (NumberFormatException ex) {
+                                sendMessage(player, plugin.l("message.command.contribution.exchange.illegalAmount"));
+                            } catch (ContributionException ex) {
+                                if (ex.getType() == ContributionException.ContributionExceptionType.NOT_ENOUGH_REVENUE) {
+                                    sendMessage(player, plugin.l("message.command.contribution.exchange.notEnoughRevenue"));
+                                } else {
+                                    sendMessage(player, String.format(plugin.l("message.command.contribution.exchange.serverError"), ex.getMessage()));
+                                }
+                            } catch (Exception ex) {
+                                ex.printStackTrace(); // log the unexpected exception
+                                sendMessage(player, String.format(plugin.l("message.command.contribution.exchange.serverError"), ex.getMessage()));
+                            }
+                        }
+                        break;
+
+                    default:
+                        sendMessage(sender, plugin.l("message.command.notFound"));
+                }
+
             }
         } else {
             sendMessage(sender, plugin.l("message.command.permissionDenied"));
@@ -129,7 +180,7 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (!sender.hasPermission(playerPermissionNode)) return new ArrayList<>();
 
-        if (args.length > 2)
+        if (args.length > 1)
             return new ArrayList<>();
         else if (args.length == 1)
             return Arrays.stream(commands).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
