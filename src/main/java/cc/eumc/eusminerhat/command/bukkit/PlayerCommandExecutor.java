@@ -10,9 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
@@ -61,16 +59,18 @@ public class PlayerCommandExecutor implements CommandExecutor, TabExecutor {
 
                     case "history":
                         StringBuilder historyMessage = new StringBuilder();
-                        plugin.getContributorManager().getPlayerContribution(player).getRevenueChangeHistoryCopy()
-                                .forEach((timeInterval, amount) -> {
-                                    StringBuilder entry = new StringBuilder();
-                                    entry.append(Timestamp.toFormattedTime(timeInterval));
-                                    entry.append("§7 | ");
-                                    entry.append(amount >= 0 ? "§2+§r" : "§4-§r");
-                                    entry.append(Math.abs(amount));
-                                    entry.append("\n");
-                                    historyMessage.insert(0, entry);
-                                });
+                        Map<Long, Double> history = plugin.getContributorManager().getPlayerContribution(player).getRevenueChangeHistoryCopy();
+                        List<Long> sortedTimestamps = new ArrayList<>(history.keySet());
+                        Collections.sort(sortedTimestamps);
+                        sortedTimestamps.forEach(timestamp -> {
+                            double amount = history.get(timestamp);
+                            String entry = Timestamp.toFormattedTime(timestamp) +
+                                    "§7 | " +
+                                    (amount >= 0 ? "§2+§r" : "§4-§r") +
+                                    Math.abs(amount) +
+                                    "\n";
+                            historyMessage.append(entry);
+                        });
                         sendMessage(sender, String.format(plugin.l("message.command.contribution.revenueHistory"), historyMessage));
                         break;
 
