@@ -9,9 +9,9 @@ commands:
   minerhat:
   minerhatadmin:
 permissions:
-  minerhut.contributor:
+  minerhat.contributor:
     default: true
-    description: Permission for MinerHut mining contributior commands
-  minerhut.admin:
+    description: Permission for MinerHat mining contributior commands
+  minerhat.admin:
     default: op
-    description: Permission for MinerHut management commands
+    description: Permission for MinerHat management commands

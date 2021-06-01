@@ -49,8 +49,8 @@ MinerHat is a Minecraft server plugin that utilizes your server at low load to m
 
 | Commands         | Permission Node        |
 | ---------------- | ---------------------- |
-| /minerhat *      | `minerhut.contributor` |
-| /minerhatadmin * | `minerhut.admin`       |
+| /minerhat *      | `minerhat.contributor` |
+| /minerhatadmin * | `minerhat.admin`       |
 
 
 
