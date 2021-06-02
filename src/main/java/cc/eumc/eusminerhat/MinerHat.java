@@ -15,7 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
@@ -279,8 +281,7 @@ public final class MinerHat extends JavaPlugin {
                     continue;
                 } else {
                     String backupName = "" + Timestamp.getSecondsSince1970() + "_bak_" + language + ".json";
-                    Files.move(languageFile.toPath(), languageFile.toPath().resolveSibling(backupName));
-
+                    Files.copy(languageFile.toPath(), languageFile.toPath().resolveSibling(backupName), StandardCopyOption.REPLACE_EXISTING);
                     // No translation for this warning message because the language pack has not been loaded yet.
                     sendWarn(String.format("Language pack %s is not compatible with the current version of MinerHat, " +
                             "we have written an up-to-date copy for replacement. An backup has been made.", language + ".json"));
@@ -288,7 +289,12 @@ public final class MinerHat extends JavaPlugin {
             }
 
             InputStream in = getResource(language + ".json");
-            Files.copy(Objects.requireNonNull(in), languageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            OutputStream out = new FileOutputStream(languageFile);
+            int bytesRead;
+            byte[] buffer = new byte[4096];
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
         }
     }
 }
