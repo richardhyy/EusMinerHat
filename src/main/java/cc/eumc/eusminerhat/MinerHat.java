@@ -7,6 +7,7 @@ import cc.eumc.eusminerhat.exception.MinerException;
 import cc.eumc.eusminerhat.listener.PlayerListener;
 import cc.eumc.eusminerhat.miner.MinerManager;
 import cc.eumc.eusminerhat.miner.MinerPolicy;
+import cc.eumc.eusminerhat.util.Timestamp;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -20,6 +21,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 public final class MinerHat extends JavaPlugin {
+    public static final String LanguagePackVersion = "1.1";
+    private static final String[] BuiltInLanguagePacks = { "en" };
+
     private MinerManager minerManager;
     private String MinerPath;
     private String LanguagePath;
@@ -121,14 +125,14 @@ public final class MinerHat extends JavaPlugin {
         File languageDir = new File(LanguagePath);
         if (!languageDir.exists()) {
             languageDir.mkdir();
+        }
 
-            // Export default language pack
-            try {
-                exportDefaultLanguage();
-            } catch (Exception e) {
-                e.printStackTrace();
-                sendSevere("§cFailed exporting default language pack.");
-            }
+        // Validate and check default language packs
+        try {
+            validateDefaultLanguagePacks();
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendSevere("§cFailed exporting default language pack.");
         }
 
         File contributionDir = new File(PlayerContributionPath);
@@ -248,6 +252,10 @@ public final class MinerHat extends JavaPlugin {
     }
 
     public String prefixForEachLine(String text) {
+        if (localeManager == null) {
+            return text;
+        }
+
         String prefix = l("message.prefix");
         String[] lines = text.split("\n");
         for (int i=0; i<lines.length; i++) {
@@ -263,13 +271,24 @@ public final class MinerHat extends JavaPlugin {
         minerDir.mkdir();
     }
 
-    private void exportDefaultLanguage() throws Exception {
-        File enLanguageFile = new File(LanguagePath + "/en.json");
-        if (enLanguageFile.exists()) {
-            return;
-        }
+    private void validateDefaultLanguagePacks() throws Exception {
+        for (String language : BuiltInLanguagePacks) {
+            File languageFile = new File(LanguagePath + "/" + language + ".json");
+            if (languageFile.exists()) {
+                if (LocaleManager.checkCompatibility(languageFile)) {
+                    continue;
+                } else {
+                    String backupName = "" + Timestamp.getSecondsSince1970() + "_bak_" + language + ".json";
+                    Files.move(languageFile.toPath(), languageFile.toPath().resolveSibling(backupName));
 
-        InputStream in = getResource("en.json");
-        Files.copy(Objects.requireNonNull(in), enLanguageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    // No translation for this warning message because the language pack has not been loaded yet.
+                    sendWarn(String.format("Language pack %s is not compatible with the current version of MinerHat, " +
+                            "we have written an up-to-date copy for replacement. An backup has been made.", language + ".json"));
+                }
+            }
+
+            InputStream in = getResource(language + ".json");
+            Files.copy(Objects.requireNonNull(in), languageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 }
