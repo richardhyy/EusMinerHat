@@ -2,6 +2,7 @@ package cc.eumc.eusminerhat.listener;
 
 import cc.eumc.eusminerhat.MinerHat;
 import cc.eumc.eusminerhat.miner.MinerManager;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -13,10 +14,12 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         checkMiner();
     }
 
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         checkMiner();
     }
